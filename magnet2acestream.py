@@ -70,7 +70,7 @@ def main():
                     if infohash in processed_ids:
                         content_id = processed_ids[infohash]
                         if content_id == "0":
-                            print(f"{Fore.YELLOW}[Línea {line_num}] El infohash {infohash} no ha podido conseguir un id previamente. Se omite la comprobación.{Style.RESET_ALL}")
+                            print(f"{Fore.YELLOW}[Línea {line_num}][{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}] El infohash {infohash} no ha podido conseguir un id previamente. Se omite la comprobación.{Style.RESET_ALL}")
                             ids_file.write("0\n")
                             ids_file.flush()
                             error_count += 1
