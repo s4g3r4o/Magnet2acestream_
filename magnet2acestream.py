@@ -6,7 +6,6 @@ import json
 import signal
 from colorama import Fore, Style
 from datetime import datetime
-import requests
 
 def load_config(filename):
     if not os.path.exists(filename):
@@ -70,7 +69,7 @@ def main():
                     if infohash in processed_ids:
                         content_id = processed_ids[infohash]
                         if content_id == "0":
-                            print(f"{Fore.YELLOW}[Línea {line_num}][{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}] El infohash {infohash} no ha podido conseguir un id previamente. Se omite la comprobación.{Style.RESET_ALL}")
+                            print(f"{Fore.YELLOW}[Línea {line_num}] El infohash {infohash} no ha podido conseguir un id previamente. Se omite la comprobación.{Style.RESET_ALL}")
                             ids_file.write("0\n")
                             ids_file.flush()
                             error_count += 1
@@ -80,10 +79,10 @@ def main():
                             ids_file.flush()
                             correct_count += 1
                     else:
+                        command = f'curl "http://127.0.0.1:6878/server/api?api_version=3&method=get_content_id&infohash={infohash}"'
+                        result = subprocess.run(command, shell=True, capture_output=True, text=True)
                         try:
-                            url = f"http://127.0.0.1:6878/server/api?api_version=3&method=get_content_id&infohash={infohash}"
-                            response = requests.get(url)
-                            response_json = response.json()
+                            response_json = json.loads(result.stdout)
                             content_id = response_json["result"]["content_id"]
                             print(f"{Fore.GREEN}[Línea {line_num}][{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}] El infohash {infohash} se ha generado correctamente. Su id es {content_id}{Style.RESET_ALL}")
                             ids_file.write(content_id + "\n")
